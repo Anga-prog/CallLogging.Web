@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../CallLogging.Data/CallLogging.Data.csproj" />
+  <Project Path="../CallLogging.Service/CallLogging.Services.csproj" />
+  <Project Path="../CallLogging/CallLogging.csproj" />
+  <Project Path="CallLogging.Web.csproj" />
+</Solution>

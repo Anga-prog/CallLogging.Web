@@ -1,0 +1,113 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Call Logging System";
+}
+
+<div class="cls-home">
+    <!-- Hero side -->
+    <div class="cls-hero">
+        <div class="cls-hero-content">
+            <div class="cls-hero-badge">
+                <i class="bi bi-shield-check"></i> Enterprise Support Platform
+            </div>
+            <h1 class="cls-hero-title">
+                Resolve issues<br><em>faster than ever.</em>
+            </h1>
+            <p class="cls-hero-desc">
+                A unified workspace for support teams and clients. Log calls, track tickets,
+                and collaborate — all in one place.
+            </p>
+            <ul class="cls-feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> Log and track support calls</li>
+                <li><i class="bi bi-check-circle-fill"></i> Prioritise and assign tickets</li>
+                <li><i class="bi bi-check-circle-fill"></i> Attach files and updates</li>
+                <li><i class="bi bi-check-circle-fill"></i> Client portal for live status</li>
+            </ul>
+            <div class="cls-stats">
+                <div class="cls-stat"><span>99.9%</span> Uptime</div>
+                <div class="cls-stat-divider"></div>
+                <div class="cls-stat"><span>&lt;2 min</span> Avg. response</div>
+                <div class="cls-stat-divider"></div>
+                <div class="cls-stat"><span>24/7</span> Support</div>
+            </div>
+        </div>
+        <div class="cls-hero-gfx" aria-hidden="true">
+            <div class="cls-gfx-ring cls-gfx-ring--1"></div>
+            <div class="cls-gfx-ring cls-gfx-ring--2"></div>
+            <div class="cls-gfx-ring cls-gfx-ring--3"></div>
+            <div class="cls-gfx-card cls-gfx-card--1">
+                <i class="bi bi-ticket-perforated-fill"></i>
+                <span>#4821 — Network issue resolved</span>
+                <small>2m ago</small>
+            </div>
+            <div class="cls-gfx-card cls-gfx-card--2">
+                <i class="bi bi-arrow-up-circle-fill cls-text-up"></i>
+                <span>12 tickets closed today</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login side -->
+    <div class="cls-login-side">
+        <div class="cls-login-box">
+            <div class="cls-login-header">
+                <h2>Welcome back</h2>
+                <p>Sign in to your account to continue</p>
+            </div>
+            <form asp-controller="Auth" asp-action="Login" method="post" class="cls-login-form">
+                <div asp-validation-summary="ModelOnly" class="cls-alert-error"></div>
+
+                <div class="cls-field">
+                    <label asp-for="Email">Email address</label>
+                    <div class="cls-input-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Email" class="cls-input" placeholder="you@company.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="cls-field-error"></span>
+                </div>
+
+                <div class="cls-field">
+                    <div class="cls-field-row">
+                        <label asp-for="Password">Password</label>
+                    </div>
+                    <div class="cls-input-wrap">
+                        <i class="bi bi-lock"></i>
+                        <input asp-for="Password" class="cls-input" type="password" placeholder="••••••••" id="passwordField" />
+                        <button type="button" class="cls-pw-toggle" onclick="togglePw()" aria-label="Toggle password">
+                            <i class="bi bi-eye" id="pwIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="cls-field-error"></span>
+                </div>
+
+                <div class="cls-field-check">
+                    <label class="cls-checkbox">
+                        <input asp-for="RememberMe" type="checkbox" />
+                        <span class="cls-checkbox-mark"></span>
+                        Keep me signed in
+                    </label>
+                </div>
+
+                <button type="submit" class="cls-submit-btn">
+                    Sign in <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePw() {
+            const field = document.getElementById('passwordField');
+            const icon = document.getElementById('pwIcon');
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                field.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+    </script>
+}
