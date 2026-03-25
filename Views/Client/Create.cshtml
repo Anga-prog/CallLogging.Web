@@ -1,0 +1,64 @@
+@model ClientCreateTicketViewModel
+@{
+    ViewData["Title"] = "Log New Call";
+}
+
+<div class="cls-page cls-page--narrow">
+    <div class="cls-page-header">
+        <div>
+            <a class="cls-back-link" asp-controller="Client" asp-action="Dashboard">
+                <i class="bi bi-arrow-left"></i> Back to My Tickets
+            </a>
+            <h1 class="cls-page-title">Log a New Call</h1>
+            <p class="cls-page-sub">Describe your issue and we'll get back to you as soon as possible.</p>
+        </div>
+    </div>
+
+    <div class="cls-panel">
+        <form asp-action="Create" method="post" class="cls-create-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="cls-alert-error"></div>
+
+            <div class="cls-form-row">
+                <div class="cls-field">
+                    <label>Product</label>
+                    <select asp-for="ProductId" asp-items="Model.Products" class="cls-select">
+                        <option value="">— Select product —</option>
+                    </select>
+                </div>
+                <div class="cls-field">
+                    <label>Call Type</label>
+                    <select asp-for="CallTypeId" asp-items="Model.CallTypes" class="cls-select">
+                        <option value="">— Select type —</option>
+                    </select>
+                </div>
+                <div class="cls-field">
+                    <label>Priority</label>
+                    <select asp-for="PriorityId" asp-items="Model.Priorities" class="cls-select">
+                        <option value="">— Select priority —</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="cls-field">
+                <label>Title</label>
+                <input asp-for="Title" class="cls-input" placeholder="Brief summary of the issue" />
+                <span asp-validation-for="Title" class="cls-field-error"></span>
+            </div>
+
+            <div class="cls-field">
+                <label>Description</label>
+                <textarea asp-for="Description" class="cls-textarea" rows="6"
+                          placeholder="Describe the issue in detail — steps to reproduce, error messages, expected vs actual behaviour..."></textarea>
+                <span asp-validation-for="Description" class="cls-field-error"></span>
+            </div>
+
+            <div class="cls-form-actions">
+                <a asp-controller="Client" asp-action="Dashboard" class="cls-btn-ghost">Cancel</a>
+                <button type="submit" class="cls-submit-btn cls-submit-btn--inline">
+                    Submit Ticket <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+@model StaffDashboardViewModel
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="cls-page">
+    <div class="cls-page-header">
+        <div>
+            <h1 class="cls-page-title">Dashboard</h1>
+            <p class="cls-page-sub">Open tickets requiring attention</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="cls-stats-grid">
+        <div class="cls-stat-card">
+            <span class="cls-stat-card-label">Total Open</span>
+            <span class="cls-stat-card-value">@Model.Stats.TotalOpen</span>
+        </div>
+        <div class="cls-stat-card cls-stat-card--warn">
+            <span class="cls-stat-card-label">Unassigned</span>
+            <span class="cls-stat-card-value">@Model.Stats.Unassigned</span>
+        </div>
+        @foreach (var kv in Model.Stats.OpenByPriority.OrderBy(x => x.Key))
+        {
+            <div class="cls-stat-card">
+                <span class="cls-stat-card-label">@kv.Key</span>
+                <span class="cls-stat-card-value">@kv.Value</span>
+            </div>
+        }
+    </div>
+
+    <div class="cls-dashboard-body">
+        <!-- Ticket Table -->
+        <div class="cls-panel cls-panel--tickets">
+            <div class="cls-panel-header">
+                <h2 class="cls-panel-title"><i class="bi bi-ticket-perforated"></i> Open Tickets</h2>
+            </div>
+            <div class="cls-table-wrap">
+                <table class="cls-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Client</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Assigned</th>
+                            <th>Age</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Tickets)
+                        {
+                            <tr class="@(t.IsAwaitingClient ? "cls-tr--awaiting" : "")">
+                                <td class="cls-td-id">#@t.Id</td>
+                                <td>
+                                    <span class="cls-ticket-title">@t.Title</span>
+                                    <small class="cls-ticket-meta">@t.Product &bull; @t.CallType</small>
+                                </td>
+                                <td>
+                                    <span class="cls-client-name">@t.ClientName</span>
+                                    <small class="cls-client-company">@t.ClientCompany</small>
+                                </td>
+                                <td><span class="cls-badge cls-badge--priority-@t.Priority.ToLower().Replace(" ", "")">@t.Priority</span></td>
+                                <td><span class="cls-badge cls-badge--status-@t.Status.ToLower().Replace(" ", "")">@t.Status</span></td>
+                                <td>@(t.AssignedTo ?? "—")</td>
+                                <td class="@(t.AgeHours > 24 ? "cls-td-age-warn" : "")">@t.AgeHours h</td>
+                                <td>
+                                    <a class="cls-btn-table" asp-controller="Staff" asp-action="Detail" asp-route-id="@t.Id">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Tickets.Any())
+                        {
+                            <tr><td colspan="8" class="cls-empty">No open tickets.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="cls-dashboard-right">
+            <!-- Agent Workload -->
+            <div class="cls-panel">
+                <div class="cls-panel-header">
+                    <h2 class="cls-panel-title"><i class="bi bi-people"></i> Agent Workload</h2>
+                </div>
+                <div class="cls-agent-list">
+                    @foreach (var agent in Model.AgentWorkloads)
+                    {
+                        <div class="cls-agent-row">
+                            <div class="cls-agent-avatar">@agent.FullName[0]</div>
+                            <div class="cls-agent-info">
+                                <span class="cls-agent-name">@agent.FullName</span>
+                                <span class="cls-agent-role">@agent.Role</span>
+                            </div>
+                            <div class="cls-agent-meta">
+                                <span class="cls-agent-count">@agent.OpenTickets open</span>
+                                <span class="cls-badge cls-badge--workload-@agent.WorkloadLevel.ToLower()">@agent.WorkloadLevel</span>
+                            </div>
+                        </div>
+                    }
+                    @if (!Model.AgentWorkloads.Any())
+                    {
+                        <p class="cls-empty">No agent data.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="cls-panel">
+                <div class="cls-panel-header">
+                    <h2 class="cls-panel-title"><i class="bi bi-clock-history"></i> Recent Activity</h2>
+                </div>
+                <div class="cls-activity-list">
+                    @foreach (var act in Model.RecentActivities)
+                    {
+                        <div class="cls-activity-row">
+                            <div class="cls-activity-avatar">@act.FullName[0]</div>
+                            <div class="cls-activity-info">
+                                <span class="cls-activity-agent">@act.FullName</span>
+                                <span class="cls-activity-desc">
+                                    updated
+                                    <a asp-controller="Staff" asp-action="Detail" asp-route-id="@act.TicketId">#@act.TicketId</a>
+                                    @if (!string.IsNullOrEmpty(act.StatusAfterUpdate))
+                                    {
+                                        <span> → <span class="cls-badge cls-badge--status-@act.StatusAfterUpdate.ToLower().Replace(" ", "")">@act.StatusAfterUpdate</span></span>
+                                    }
+                                </span>
+                            </div>
+                            <span class="cls-activity-time">@act.MinutesAgo min ago</span>
+                        </div>
+                    }
+                    @if (!Model.RecentActivities.Any())
+                    {
+                        <p class="cls-empty">No recent activity.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

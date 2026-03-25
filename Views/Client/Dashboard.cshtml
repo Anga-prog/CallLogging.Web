@@ -1,0 +1,83 @@
+@model ClientDashboardViewModel
+@{
+    ViewData["Title"] = "My Tickets";
+}
+
+<div class="cls-page">
+    <div class="cls-page-header">
+        <div>
+            <h1 class="cls-page-title">My Tickets</h1>
+            <p class="cls-page-sub">Track the status of your support requests</p>
+        </div>
+        <a class="cls-btn-primary" asp-controller="Client" asp-action="Create">
+            <i class="bi bi-plus-lg"></i> New Ticket
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="cls-stats-grid cls-stats-grid--3">
+        <div class="cls-stat-card">
+            <span class="cls-stat-card-label">Total</span>
+            <span class="cls-stat-card-value">@Model.Stats.TotalTickets</span>
+        </div>
+        <div class="cls-stat-card cls-stat-card--warn">
+            <span class="cls-stat-card-label">Open</span>
+            <span class="cls-stat-card-value">@Model.Stats.OpenTickets</span>
+        </div>
+        <div class="cls-stat-card cls-stat-card--success">
+            <span class="cls-stat-card-label">Resolved</span>
+            <span class="cls-stat-card-value">@Model.Stats.ResolvedTickets</span>
+        </div>
+    </div>
+
+    <!-- Ticket Table -->
+    <div class="cls-panel">
+        <div class="cls-table-wrap">
+            <table class="cls-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Product</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th>Last Update</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.Tickets)
+                    {
+                        <tr>
+                            <td class="cls-td-id">#@t.Id</td>
+                            <td>
+                                <span class="cls-ticket-title">@t.Title</span>
+                                <small class="cls-ticket-meta">@t.CallType</small>
+                            </td>
+                            <td>@t.Product</td>
+                            <td><span class="cls-badge cls-badge--priority-@t.Priority.ToLower().Replace(" ", "")">@t.Priority</span></td>
+                            <td><span class="cls-badge cls-badge--status-@t.Status.ToLower().Replace(" ", "")">@t.Status</span></td>
+                            <td>@(t.AssignedTo ?? "—")</td>
+                            <td>@(t.LastUpdatedAt?.ToString("dd MMM yyyy") ?? t.CreatedAt.ToString("dd MMM yyyy"))</td>
+                            <td>
+                                <a class="cls-btn-table" asp-controller="Client" asp-action="Detail" asp-route-id="@t.Id">
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Tickets.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="cls-empty">
+                                No tickets yet.
+                                <a asp-controller="Client" asp-action="Create">Log your first call</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,17 +1,25 @@
 using CallLogging.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace CallLogging.Web.Controllers
 {
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            return View();
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                if (User.HasClaim("IsStaff", "true"))
+                    return RedirectToAction("Dashboard", "Staff");
+                if (User.HasClaim("IsClient", "true"))
+                    return RedirectToAction("Dashboard", "Client");
+            }
+            return View(new LoginViewModel());
         }
 
-        public IActionResult AccessDenied()
-             => View();
+        [AllowAnonymous]
+        public IActionResult AccessDenied() => View();
     }
 }

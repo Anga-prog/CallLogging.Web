@@ -1,0 +1,155 @@
+@model StaffTicketDetailViewModel
+@{
+    ViewData["Title"] = $"Ticket #{Model.Ticket.Id}";
+    var t = Model.Ticket;
+}
+
+<div class="cls-page">
+    <div class="cls-page-header">
+        <div>
+            <a class="cls-back-link" asp-controller="Staff" asp-action="Dashboard">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+            <h1 class="cls-page-title">
+                <span class="cls-ticket-id">#@t.Id</span> @t.Title
+            </h1>
+            <div class="cls-ticket-badges">
+                <span class="cls-badge cls-badge--status-@t.Status.ToLower().Replace(" ", "")">@t.Status</span>
+                <span class="cls-badge cls-badge--priority-@t.Priority.ToLower().Replace(" ", "")">@t.Priority</span>
+                <span class="cls-badge cls-badge--neutral">@t.CallType</span>
+                <span class="cls-badge cls-badge--neutral">@t.Product</span>
+            </div>
+        </div>
+        <form asp-action="Delete" asp-route-id="@t.Id" method="post"
+              onsubmit="return confirm('Delete this ticket? This cannot be undone.');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="cls-btn-danger">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+        </form>
+    </div>
+
+    <div class="cls-detail-body">
+        <!-- Left: info + history -->
+        <div class="cls-detail-main">
+            <!-- Client info -->
+            <div class="cls-panel">
+                <div class="cls-panel-header"><h2 class="cls-panel-title"><i class="bi bi-building"></i> Client</h2></div>
+                <div class="cls-info-grid">
+                    <div class="cls-info-item"><span class="cls-info-label">Company</span><span>@t.ClientCompany</span></div>
+                    <div class="cls-info-item"><span class="cls-info-label">Contact</span><span>@t.ClientName</span></div>
+                    <div class="cls-info-item"><span class="cls-info-label">Assigned To</span><span>@(t.AssignedTo ?? "Unassigned")</span></div>
+                    <div class="cls-info-item"><span class="cls-info-label">Created</span><span>@t.CreatedAt.ToString("dd MMM yyyy HH:mm")</span></div>
+                    <div class="cls-info-item"><span class="cls-info-label">Last Updated</span><span>@t.UpdatedAt.ToString("dd MMM yyyy HH:mm")</span></div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="cls-panel">
+                <div class="cls-panel-header"><h2 class="cls-panel-title"><i class="bi bi-file-text"></i> Description</h2></div>
+                <p class="cls-description">@t.Description</p>
+            </div>
+
+            <!-- Update history -->
+            <div class="cls-panel">
+                <div class="cls-panel-header">
+                    <h2 class="cls-panel-title"><i class="bi bi-clock-history"></i> History (@t.Updates.Count)</h2>
+                </div>
+                <div class="cls-timeline">
+                    @foreach (var u in t.Updates)
+                    {
+                        <div class="cls-timeline-item">
+                            <div class="cls-timeline-dot"></div>
+                            <div class="cls-timeline-content">
+                                <div class="cls-timeline-header">
+                                    <span class="cls-timeline-author">@u.UpdatedBy</span>
+                                    @if (!string.IsNullOrEmpty(u.Status))
+                                    {
+                                        <span class="cls-badge cls-badge--status-@u.Status.ToLower().Replace(" ", "")">@u.Status</span>
+                                    }
+                                    <span class="cls-timeline-time">@u.CreatedAt.ToString("dd MMM yyyy HH:mm")</span>
+                                    @if (u.TimeSpentMinutes.HasValue)
+                                    {
+                                        <span class="cls-time-spent"><i class="bi bi-stopwatch"></i> @u.TimeSpentMinutes min</span>
+                                    }
+                                </div>
+                                <p class="cls-timeline-desc">@u.Description</p>
+                            </div>
+                        </div>
+                    }
+                    @if (!t.Updates.Any())
+                    {
+                        <p class="cls-empty">No updates yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: update form -->
+        @if (!t.IsFinal)
+        {
+            <div class="cls-detail-sidebar">
+                <div class="cls-panel">
+                    <div class="cls-panel-header"><h2 class="cls-panel-title"><i class="bi bi-pencil"></i> Update Ticket</h2></div>
+                    <form asp-action="Update" asp-route-id="@t.Id" method="post" class="cls-update-form">
+                        @Html.AntiForgeryToken()
+
+                        <div class="cls-field">
+                            <label>Status</label>
+                            <select name="NewStatusId" class="cls-select">
+                                @foreach (var s in Model.Statuses)
+                                {
+                                    <option value="@s.Value" selected="@(s.Value == Model.NewStatusId.ToString())">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="cls-field">
+                            <label>Priority</label>
+                            <select name="NewPriorityId" class="cls-select">
+                                @foreach (var p in Model.Priorities)
+                                {
+                                    <option value="@p.Value" selected="@(p.Value == Model.NewPriorityId.ToString())">@p.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="cls-field">
+                            <label>Assign To</label>
+                            <select name="NewAssignedToId" class="cls-select">
+                                @foreach (var a in Model.Agents)
+                                {
+                                    <option value="@a.Value" selected="@(a.Value == (Model.NewAssignedToId?.ToString() ?? "0"))">@a.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="cls-field">
+                            <label>Update Notes</label>
+                            <textarea name="UpdateDescription" class="cls-textarea" rows="4"
+                                      placeholder="Describe what was done..."></textarea>
+                        </div>
+
+                        <div class="cls-field">
+                            <label>Time Spent (minutes)</label>
+                            <input name="TimeSpentMinutes" type="number" min="0" class="cls-input" placeholder="0" />
+                        </div>
+
+                        <button type="submit" class="cls-submit-btn">
+                            Save Update <i class="bi bi-check-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="cls-detail-sidebar">
+                <div class="cls-panel cls-panel--final">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <p>This ticket is <strong>@t.Status</strong> and closed.</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

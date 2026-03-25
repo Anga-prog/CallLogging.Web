@@ -7,7 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Exclude subdirectory class-library projects from web SDK wildcard compilation -->
+    <Compile Remove="CallLogging\**" />
+    <Compile Remove="CallLogging.Data\**" />
+    <Compile Remove="CallLogging.Service\**" />
+    <EmbeddedResource Remove="CallLogging\**" />
+    <EmbeddedResource Remove="CallLogging.Data\**" />
+    <EmbeddedResource Remove="CallLogging.Service\**" />
+    <None Remove="CallLogging\**" />
+    <None Remove="CallLogging.Data\**" />
+    <None Remove="CallLogging.Service\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="CallLogging.Service\CallLogging.Services.csproj" />
   </ItemGroup>
 
 </Project>

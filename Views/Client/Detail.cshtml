@@ -1,0 +1,68 @@
+@model TicketDetailDto
+@{
+    ViewData["Title"] = $"Ticket #{Model.Id}";
+}
+
+<div class="cls-page">
+    <div class="cls-page-header">
+        <div>
+            <a class="cls-back-link" asp-controller="Client" asp-action="Dashboard">
+                <i class="bi bi-arrow-left"></i> Back to My Tickets
+            </a>
+            <h1 class="cls-page-title">
+                <span class="cls-ticket-id">#@Model.Id</span> @Model.Title
+            </h1>
+            <div class="cls-ticket-badges">
+                <span class="cls-badge cls-badge--status-@Model.Status.ToLower().Replace(" ", "")">@Model.Status</span>
+                <span class="cls-badge cls-badge--priority-@Model.Priority.ToLower().Replace(" ", "")">@Model.Priority</span>
+                <span class="cls-badge cls-badge--neutral">@Model.CallType</span>
+                <span class="cls-badge cls-badge--neutral">@Model.Product</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="cls-detail-body cls-detail-body--client">
+        <div class="cls-panel">
+            <div class="cls-panel-header"><h2 class="cls-panel-title"><i class="bi bi-info-circle"></i> Details</h2></div>
+            <div class="cls-info-grid">
+                <div class="cls-info-item"><span class="cls-info-label">Assigned To</span><span>@(Model.AssignedTo ?? "Awaiting assignment")</span></div>
+                <div class="cls-info-item"><span class="cls-info-label">Created</span><span>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</span></div>
+                <div class="cls-info-item"><span class="cls-info-label">Last Updated</span><span>@Model.UpdatedAt.ToString("dd MMM yyyy HH:mm")</span></div>
+            </div>
+        </div>
+
+        <div class="cls-panel">
+            <div class="cls-panel-header"><h2 class="cls-panel-title"><i class="bi bi-file-text"></i> Description</h2></div>
+            <p class="cls-description">@Model.Description</p>
+        </div>
+
+        <div class="cls-panel">
+            <div class="cls-panel-header">
+                <h2 class="cls-panel-title"><i class="bi bi-clock-history"></i> Updates (@Model.Updates.Count)</h2>
+            </div>
+            <div class="cls-timeline">
+                @foreach (var u in Model.Updates)
+                {
+                    <div class="cls-timeline-item">
+                        <div class="cls-timeline-dot"></div>
+                        <div class="cls-timeline-content">
+                            <div class="cls-timeline-header">
+                                <span class="cls-timeline-author">@u.UpdatedBy</span>
+                                @if (!string.IsNullOrEmpty(u.Status))
+                                {
+                                    <span class="cls-badge cls-badge--status-@u.Status.ToLower().Replace(" ", "")">@u.Status</span>
+                                }
+                                <span class="cls-timeline-time">@u.CreatedAt.ToString("dd MMM yyyy HH:mm")</span>
+                            </div>
+                            <p class="cls-timeline-desc">@u.Description</p>
+                        </div>
+                    </div>
+                }
+                @if (!Model.Updates.Any())
+                {
+                    <p class="cls-empty">No updates yet. Our team will be in touch soon.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

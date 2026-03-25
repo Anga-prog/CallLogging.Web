@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet tool:*)",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet build:*)",
+      "Bash(sqlcmd -S \"localhost\\\\SQLEXPRESS\" -d CallLoggingSystem -E -Q \"SELECT ''Role'' AS tbl, ID, Name AS Val FROM Lookup.Role UNION ALL SELECT ''Priority'', ID, PriorityName FROM Lookup.Priority UNION ALL SELECT ''CallType'', ID, Name FROM Lookup.CallType UNION ALL SELECT ''LogStatus'', ID, StatusName FROM Lookup.LogStatus UNION ALL SELECT ''Product'', ID, Name FROM Product.Product ORDER BY tbl, ID\")",
+      "Bash(sqlcmd -S \"localhost\\\\SQLEXPRESS\" -d CallLoggingSystem -E -Q \"SELECT ''Person'' AS tbl, ID, Email FROM Person.Person UNION ALL SELECT ''SystemUser'', ID, CAST\\(PersonID AS VARCHAR\\) FROM Admin.SystemUser UNION ALL SELECT ''ClientProfile'', ID, CAST\\(PersonID AS VARCHAR\\) FROM Client.ClientProfile UNION ALL SELECT ''Product'', ID, Name FROM Product.Product\")",
+      "Bash(sqlcmd -S \"localhost\\\\SQLEXPRESS\" -d CallLoggingSystem -E -Q \":*)",
+      "Bash(dotnet list:*)",
+      "Bash(find . -type f -name *.json -path */Migrations/*)"
+    ]
+  }
+}

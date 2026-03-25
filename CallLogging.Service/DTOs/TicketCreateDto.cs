@@ -1,4 +1,6 @@
-﻿namespace CallLogging.Services.DTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace CallLogging.Services.DTOs
 {
     // DTOs/TicketCreateDto.cs
     public class TicketCreateDto
